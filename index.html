@@ -5,189 +5,118 @@ html = r'''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Cloud PC Simulator</title>
+<title>Cloud PC</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Tahoma,Arial,sans-serif;overflow:hidden}
-body{background:#0878bd}
-.desktop{position:relative;width:100%;height:100%;overflow:hidden;background:
-linear-gradient(32deg,transparent 0 25%,#ffffff0c 25.2% 25.8%,transparent 26%),
-linear-gradient(145deg,#1688c5,#0075bd 52%,#0750a5)}
-.desktop:before{content:"";position:absolute;inset:0;background:linear-gradient(35deg,transparent 0 35%,#ffffff13 35.2% 35.7%,transparent 36%),linear-gradient(145deg,transparent 0 52%,#ffffff0b 52.2% 53%,transparent 53.2%);pointer-events:none}
-.taskbar{position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(#f7f7f7,#d9d9d9);border-top:2px solid #eee;display:flex;align-items:center;z-index:10}
-.start{height:30px;margin-left:3px;padding:0 10px;border:1px solid #777;border-radius:3px;background:linear-gradient(#fff,#ddd);font-weight:bold;color:#222}
-.startmenu{display:none;position:absolute;bottom:36px;left:3px;width:min(290px,90vw);background:#f3f3f3;border:2px solid #1e6bb3;box-shadow:3px 3px 12px #0005;z-index:20;padding:8px}
-.startmenu button{display:block;width:100%;text-align:left;padding:12px;border:0;background:transparent;font-size:16px}
-.startmenu button:active,.startmenu button:hover{background:#cde7fa}
-.window{display:none;position:absolute;left:4%;top:5%;width:92%;height:84%;max-height:calc(100% - 55px);background:#f4f4f4;border:2px solid #1769a8;border-radius:6px 6px 0 0;box-shadow:0 5px 22px #0005;z-index:5;overflow:hidden}
-.titlebar{height:36px;background:linear-gradient(#1688d0,#07549b);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 8px;font-weight:bold}
-.close{border:1px solid #fff8;background:#d94b3d;color:white;border-radius:3px;font-weight:bold;width:28px;height:25px}
-.content{height:calc(100% - 36px);overflow:auto;padding:12px}
-.hero{padding:14px;background:linear-gradient(120deg,#dceefa,#fff);border:1px solid #b6d4e8;border-radius:8px;margin-bottom:12px}
-.hero h2{margin:0 0 6px;font-size:21px}.muted{color:#555;font-size:13px;line-height:1.45}
-.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.game{background:white;border:1px solid #c5d3df;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:7px;min-height:190px}
-.game h3{margin:0;font-size:17px}.tag{font-size:12px;color:#31546c}.game p{margin:0;font-size:13px;line-height:1.4;color:#444;flex:1}
-.download{display:block;text-align:center;padding:10px;border-radius:5px;background:#0879c9;color:#fff;text-decoration:none;font-weight:bold}
-.download:active{background:#075b96}.note{font-size:12px;color:#555;line-height:1.5;margin-top:12px}
-.browserbar{display:flex;gap:6px;margin-bottom:10px}.browserbar input{flex:1;min-width:0;padding:10px;border:1px solid #aaa;border-radius:5px}.browserbar button{padding:9px}
-.desktoplabel{position:absolute;top:16px;left:14px;color:#fff;text-shadow:1px 1px 3px #123;font-size:13px}
-.mouse-controls{position:absolute;right:10px;top:20%;display:flex;flex-direction:column;gap:10px;z-index:3}
-.mouse-controls button{width:43px;height:43px;border-radius:50%;border:1px solid #a9d4e6;background:#103c5fc9;color:#e5f8ff;font-size:18px}
-@media(max-width:480px){.window{left:2%;width:96%;top:3%;height:88%}.games{grid-template-columns:1fr}.game{min-height:160px}.content{padding:8px}}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Arial,sans-serif;overflow:hidden}button,input{font:inherit}
+.desktop{position:relative;width:100%;height:100dvh;overflow:hidden;background:linear-gradient(145deg,#188ac8,#0076bd 55%,#0872b9);color:#fff}
+.desktop:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(35deg,transparent 0 35%,#ffffff13 35.2% 35.7%,transparent 36%),linear-gradient(145deg,transparent 0 52%,#ffffff0b 52.2% 53%,transparent 53.2%)}
+.icons{position:absolute;top:14px;left:10px;display:grid;grid-template-columns:repeat(2,78px);gap:14px 8px;z-index:1}
+.appicon{border:0;background:transparent;color:#fff;width:78px;min-height:78px;padding:5px 2px;text-shadow:1px 1px 3px #123;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;border-radius:6px}
+.appicon:active,.appicon:focus{background:#ffffff35;outline:1px solid #fff}
+.emoji{font-size:34px;line-height:38px;text-shadow:0 2px 4px #124}
+.taskbar{position:absolute;bottom:0;left:0;right:0;min-height:44px;background:#e9f3f8;color:#111;border-top:2px solid #fff;display:flex;align-items:center;gap:8px;padding:4px 7px;z-index:10}
+.start{border:1px solid #7b9db2;background:linear-gradient(#fff,#dce8ef);border-radius:4px;padding:7px 10px;font-weight:bold;color:#17364a}
+.tasklabel{font-size:12px;color:#234}
+.startmenu{display:none;position:absolute;bottom:44px;left:5px;width:min(280px,90vw);background:#f4f8fb;color:#152c3a;border:2px solid #1769a8;box-shadow:3px 3px 12px #0005;z-index:25;padding:8px;border-radius:6px}
+.startmenu button{display:block;width:100%;text-align:left;padding:13px 10px;border:0;border-radius:4px;background:transparent;color:#123}
+.startmenu button:active{background:#cde7fa}
+.window{display:none;position:absolute;left:2%;top:3%;width:96%;height:88%;background:#f4f7fa;color:#172b38;border:2px solid #1769a8;border-radius:7px;box-shadow:0 5px 22px #0005;z-index:5;overflow:hidden}
+.titlebar{height:42px;background:linear-gradient(#1688d0,#07549b);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 9px;font-weight:bold}
+.close{border:1px solid #fff8;background:#d94b3d;color:white;border-radius:4px;font-weight:bold;width:32px;height:30px}
+.content{height:calc(100% - 42px);overflow:auto;padding:10px}
+.hero{padding:13px;background:linear-gradient(120deg,#dceefa,#fff);border:1px solid #b6d4e8;border-radius:8px;margin-bottom:10px}
+.hero h2{margin:0 0 6px;font-size:20px}.muted{color:#4b5962;font-size:13px;line-height:1.45}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.game{background:white;border:1px solid #c5d3df;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:7px;min-height:165px}
+.game h3{margin:0;font-size:16px}.tag{font-size:12px;color:#31546c}.game p{margin:0;font-size:13px;line-height:1.4;color:#444;flex:1}
+.download,.bluebtn{display:block;text-align:center;padding:10px;border-radius:5px;background:#0879c9;color:#fff;text-decoration:none;font-weight:bold;border:0}
+.browserbar{display:flex;gap:6px;margin-bottom:10px}.browserbar input{flex:1;min-width:0;padding:10px;border:1px solid #aaa;border-radius:5px;color:#111;background:white}.browserbar button,.bluebtn{padding:10px}
+.browserhint{background:#fff;border:1px solid #d5e1e8;border-radius:6px;padding:12px;color:#344}
+.browserhint a{color:#0569b3;display:block;padding:9px 0;overflow-wrap:anywhere}
+.mouse-panel{position:absolute;right:8px;top:20%;z-index:15;display:flex;flex-direction:column;gap:7px;align-items:center}
+.mouse-panel button{width:42px;height:42px;border-radius:50%;border:1px solid #bde5f6;background:#103c5fd9;color:white;font-size:18px;box-shadow:0 2px 5px #0034}
+.mouse-panel .clickbtn{background:#f5faff;color:#17435b;font-size:12px;font-weight:bold}
+#cursor{position:absolute;left:48%;top:45%;z-index:30;font-size:28px;line-height:28px;pointer-events:none;filter:drop-shadow(1px 2px 1px #123);display:none}
+.keyboard{display:none;position:absolute;left:0;right:0;bottom:44px;z-index:40;background:#d7e0e8;border-top:2px solid #fff;padding:5px;box-shadow:0 -4px 14px #0004}
+.keyrows{display:flex;flex-direction:column;gap:4px}.keyrow{display:flex;gap:3px;justify-content:center}
+.key{flex:1;min-width:0;height:37px;border:1px solid #9aabb8;border-radius:5px;background:#fff;color:#152c3a;font-size:13px;padding:0 2px;box-shadow:0 1px 1px #789}
+.key.wide{flex:1.7}.key.space{flex:5}.key.action{background:#b8d9ef}
+.keyboard-head{display:flex;justify-content:space-between;align-items:center;color:#123;font-size:12px;padding:2px 4px 6px}
+.note{font-size:12px;color:#555;line-height:1.5;margin-top:12px}
+@media(max-width:480px){.games{grid-template-columns:1fr}.game{min-height:145px}.content{padding:8px}.window{height:87%}.key{height:34px;font-size:12px}.mouse-panel{top:37%;gap:6px}.mouse-panel button{width:38px;height:38px}}
 </style>
 </head>
 <body>
-<div class="desktop">
-  <div class="desktoplabel">Cloud PC</div>
-  <div class="mouse-controls">
-    <button aria-label="Chuột trái" onclick="toast('Chuột trái ảo')">◧</button>
-    <button aria-label="Chuột phải" onclick="toast('Chuột phải ảo')">◨</button>
-    <button aria-label="Cuộn lên" onclick="toast('Cuộn lên')">⌃</button>
-    <button aria-label="Cuộn xuống" onclick="toast('Cuộn xuống')">⌄</button>
+<div class="desktop" id="desktop">
+  <div class="icons">
+    <button class="appicon" onclick="openWindow('browser')"><span class="emoji">🌐</span><span>Google Chrome</span></button>
+    <button class="appicon" onclick="openWindow('games')"><span class="emoji">🎮</span><span>Games</span></button>
+    <button class="appicon" onclick="showKeyboard()"><span class="emoji">⌨️</span><span>Bàn phím</span></button>
+    <button class="appicon" onclick="toggleCursor()"><span class="emoji">🖱️</span><span>Chuột ảo</span></button>
   </div>
   <div id="startmenu" class="startmenu">
-    <button onclick="openWindow('games')">🎮 Games — Tải game PC</button>
-    <button onclick="openWindow('browser')">🌐 Google Chrome (mô phỏng)</button>
-    <button onclick="toast('Đây là giao diện mô phỏng trên website.')">⚙️ Settings</button>
+    <button onclick="openWindow('browser')">🌐 Google Chrome</button>
+    <button onclick="openWindow('games')">🎮 Thư viện game PC</button>
+    <button onclick="showKeyboard()">⌨️ Bàn phím ảo</button>
+    <button onclick="toggleCursor()">🖱️ Bật/tắt chuột ảo</button>
   </div>
   <section id="games" class="window">
-    <div class="titlebar"><span>🎮 Games — PC Game Store Links</span><button class="close" onclick="closeWindow('games')">×</button></div>
+    <div class="titlebar"><span>🎮 Thư viện game PC</span><button class="close" onclick="closeWindow('games')">×</button></div>
     <div class="content">
-      <div class="hero">
-        <h2>Thư viện game PC</h2>
-        <div class="muted">Chọn game rồi bấm “Tải từ trang chính thức”. Liên kết sẽ mở trang nhà phát hành/cửa hàng để mua, cài đặt hoặc tải launcher.</div>
-      </div>
+      <div class="hero"><h2>Thư viện game PC</h2><div class="muted">Bấm nút để mở trang tải hoặc cửa hàng chính thức. Đây là danh sách liên kết, không chạy game Windows trực tiếp trên website.</div></div>
       <div class="games">
-        <article class="game">
-          <h3>Grand Theft Auto V Enhanced</h3><div class="tag">Hành động • Thế giới mở • Khoảng 105 GB</div>
-          <p>Dung lượng yêu cầu trên PC được nhà phát hành/cửa hàng công bố; cần máy Windows tương thích và dung lượng trống SSD.</p>
-          <a class="download" href="https://store.rockstargames.com/en/game/buy-gta-v" target="_blank" rel="noopener">Tải từ Rockstar Games</a>
-          <a class="download" href="https://store.steampowered.com/app/3240220/Grand_Theft_Auto_V/" target="_blank" rel="noopener">Mở trên Steam</a>
-        </article>
-        <article class="game">
-          <h3>Red Dead Redemption 2</h3><div class="tag">Phiêu lưu • Thế giới mở • Dung lượng lớn</div>
-          <p>Game PC dung lượng lớn. Xem yêu cầu lưu trữ và các lựa chọn mua/tải trên trang chính thức trước khi cài.</p>
-          <a class="download" href="https://www.rockstargames.com/downloads" target="_blank" rel="noopener">Trang tải Rockstar Games</a>
-        </article>
-        <article class="game">
-          <h3>Minecraft: Java & Bedrock</h3><div class="tag">Sinh tồn • Sáng tạo</div>
-          <p>Tải launcher chính thức; dung lượng cài đặt thay đổi theo phiên bản, thế giới và nội dung bổ sung.</p>
-          <a class="download" href="https://www.minecraft.net/download" target="_blank" rel="noopener">Tải Minecraft chính thức</a>
-        </article>
-        <article class="game">
-          <h3>Fortnite</h3><div class="tag">Battle Royale • Nhiều người chơi</div>
-          <p>Cài Epic Games Launcher trên PC tương thích, sau đó tìm Fortnite trong thư viện cửa hàng.</p>
-          <a class="download" href="https://store.epicgames.com/en-US/" target="_blank" rel="noopener">Mở Epic Games Store</a>
-          <a class="download" href="https://www.epicgames.com/help/en-US/" target="_blank" rel="noopener">Hướng dẫn Epic Games</a>
-        </article>
-        <article class="game">
-          <h3>Roblox (PC)</h3><div class="tag">Nhiều thể loại • Online</div>
-          <p>Tải ứng dụng Roblox chính thức. Đây không phải bản cài game Windows chạy trực tiếp bên trong website giả lập.</p>
-          <a class="download" href="https://www.roblox.com/download" target="_blank" rel="noopener">Tải Roblox chính thức</a>
-        </article>
-        <article class="game">
-          <h3>Epic Games Launcher</h3><div class="tag">Cửa hàng và trình quản lý game</div>
-          <p>Dùng launcher để tải và cài các game có trong tài khoản của bạn trên máy Windows.</p>
-          <a class="download" href="https://store.epicgames.com/download" target="_blank" rel="noopener">Tải Epic Games Launcher</a>
-        </article>
+        <article class="game"><h3>Grand Theft Auto V Enhanced</h3><div class="tag">Thế giới mở • Khoảng 105 GB</div><p>Cần máy tính Windows tương thích và dung lượng trống.</p><a class="download" href="https://store.rockstargames.com/en/game/buy-gta-v" target="_blank" rel="noopener">Rockstar Games</a><a class="download" href="https://store.steampowered.com/app/3240220/Grand_Theft_Auto_V/" target="_blank" rel="noopener">Mở Steam</a></article>
+        <article class="game"><h3>Red Dead Redemption 2</h3><div class="tag">Phiêu lưu • Thế giới mở</div><p>Xem yêu cầu hệ thống và dung lượng trên trang chính thức.</p><a class="download" href="https://www.rockstargames.com/downloads" target="_blank" rel="noopener">Rockstar Downloads</a></article>
+        <article class="game"><h3>Minecraft</h3><div class="tag">Sinh tồn • Sáng tạo</div><p>Tải launcher chính thức cho PC.</p><a class="download" href="https://www.minecraft.net/download" target="_blank" rel="noopener">Tải Minecraft</a></article>
+        <article class="game"><h3>Fortnite</h3><div class="tag">Battle Royale</div><p>Cần cài Epic Games Launcher trên PC.</p><a class="download" href="https://store.epicgames.com/en-US/" target="_blank" rel="noopener">Epic Games Store</a></article>
+        <article class="game"><h3>Roblox</h3><div class="tag">Nhiều thể loại • Online</div><p>Tải ứng dụng Roblox chính thức.</p><a class="download" href="https://www.roblox.com/download" target="_blank" rel="noopener">Tải Roblox</a></article>
+        <article class="game"><h3>Epic Games Launcher</h3><div class="tag">Cửa hàng game</div><p>Trình quản lý tải và cài game cho Windows.</p><a class="download" href="https://store.epicgames.com/download" target="_blank" rel="noopener">Tải Epic Launcher</a></article>
       </div>
-      <div class="note"><b>Quan trọng:</b> Đây là trang danh sách liên kết, không tự tải game vào website và không hiển thị tiến trình tải thật. Game PC thường không chạy trực tiếp trên Android. Không tải file cài đặt từ website không rõ nguồn gốc.</div>
+      <p class="note"><b>Lưu ý:</b> Website mô phỏng không phải máy chủ Windows thật; game PC không thể cài/chạy bên trong trang này.</p>
     </div>
   </section>
   <section id="browser" class="window">
-    <div class="titlebar"><span>🌐 Google Chrome — mô phỏng</span><button class="close" onclick="closeWindow('browser')">×</button></div>
+    <div class="titlebar"><span>🌐 Google Chrome (mô phỏng)</span><button class="close" onclick="closeWindow('browser')">×</button></div>
     <div class="content">
-      <div class="browserbar"><input id="address" value="https://www.google.com" aria-label="Địa chỉ website"><button onclick="goAddress()">Đi</button></div>
-      <p class="muted">Đây là cửa sổ trình duyệt mô phỏng. Bấm “Đi” để mở địa chỉ trong tab trình duyệt mới; một số trang có thể chặn hiển thị bên trong website.</p>
-      <button onclick="openWindow('games')">Mở Games 🎮</button>
+      <form class="browserbar" onsubmit="goAddress();return false"><input id="address" value="https://www.google.com" aria-label="Nhập địa chỉ website" placeholder="Nhập địa chỉ web"><button class="bluebtn" type="submit">Đi</button></form>
+      <div class="browserhint"><b>Trình duyệt mô phỏng</b><p class="muted">Nhập địa chỉ rồi bấm Đi. Trang web sẽ mở trong tab mới của trình duyệt điện thoại; website này không phải Chrome thật.</p><a href="https://www.google.com" target="_blank" rel="noopener">🔎 Mở Google</a><a href="https://www.youtube.com" target="_blank" rel="noopener">▶ Mở YouTube</a><a href="https://www.roblox.com" target="_blank" rel="noopener">🎮 Mở Roblox</a><button class="bluebtn" onclick="openWindow('games')">Mở thư viện game</button></div>
     </div>
   </section>
-  <div class="taskbar"><button class="start" onclick="toggleStart()">🪟 Start</button></div>
+  <div class="mouse-panel" aria-label="Điều khiển chuột ảo">
+    <button onclick="moveCursor(-24,0)" aria-label="Sang trái">←</button>
+    <button onclick="moveCursor(24,0)" aria-label="Sang phải">→</button>
+    <button onclick="moveCursor(0,-24)" aria-label="Lên">↑</button>
+    <button onclick="moveCursor(0,24)" aria-label="Xuống">↓</button>
+    <button class="clickbtn" onclick="virtualClick()">CLICK</button>
+    <button class="clickbtn" onclick="virtualRightClick()">RIGHT</button>
+  </div>
+  <div id="cursor">➤</div>
+  <div id="keyboard" class="keyboard">
+    <div class="keyboard-head"><span>Bàn phím ảo — bấm vào ô nhập trước, rồi chọn phím</span><button onclick="hideKeyboard()">Đóng ✕</button></div>
+    <div class="keyrows" id="keyrows"></div>
+  </div>
+  <div class="taskbar"><button class="start" onclick="toggleStart()">🪟 Start</button><span class="tasklabel">Cloud PC • Mô phỏng</span><span style="margin-left:auto;font-size:12px;color:#234">⌨️ 🖱️</span></div>
 </div>
 <script>
+let cursorX=window.innerWidth*0.48,cursorY=window.innerHeight*0.45;
 function toggleStart(){const m=document.getElementById('startmenu');m.style.display=m.style.display==='block'?'none':'block'}
 function openWindow(id){document.getElementById('startmenu').style.display='none';document.querySelectorAll('.window').forEach(w=>w.style.display='none');document.getElementById(id).style.display='block'}
 function closeWindow(id){document.getElementById(id).style.display='none'}
-function goAddress(){let v=document.getElementById('address').value.trim();if(!/^https?:\/\//i.test(v))v='https://'+v;window.open(v,'_blank','noopener')}
-function toast(msg){alert(msg)}
+function goAddress(){let el=document.getElementById('address');let v=el.value.trim();if(!v)return;if(!/^https?:\/\//i.test(v))v='https://'+v;window.open(v,'_blank','noopener')}
+function showKeyboard(){document.getElementById('keyboard').style.display='block'}
+function hideKeyboard(){document.getElementById('keyboard').style.display='none'}
+function toggleCursor(){let c=document.getElementById('cursor');c.style.display=c.style.display==='block'?'none':'block';placeCursor()}
+function placeCursor(){let c=document.getElementById('cursor');c.style.left=Math.max(0,Math.min(window.innerWidth-24,cursorX))+'px';c.style.top=Math.max(0,Math.min(window.innerHeight-60,cursorY))+'px'}
+function moveCursor(dx,dy){let c=document.getElementById('cursor');c.style.display='block';cursorX=Math.max(0,Math.min(window.innerWidth-24,cursorX+dx));cursorY=Math.max(0,Math.min(window.innerHeight-60,cursorY+dy));placeCursor()}
+function virtualClick(){let el=document.elementFromPoint(cursorX+3,cursorY+3);if(!el)return;let target=el.closest('button,a,input,[role=button]')||el;if(target.tagName==='INPUT'){target.focus();showKeyboard();return}if(target.tagName==='A'){window.open(target.href,'_blank','noopener');return}target.click()}
+function virtualRightClick(){let el=document.elementFromPoint(cursorX+3,cursorY+3);if(el&&el.tagName==='INPUT'){el.focus();showKeyboard()}else alert('Chuột phải ảo: trên website điện thoại, menu chuột phải có thể không được hỗ trợ.')}
+const rows=[['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['?123',',','SPACE','.','Enter']];
+function buildKeyboard(){const root=document.getElementById('keyrows');rows.forEach(row=>{const line=document.createElement('div');line.className='keyrow';row.forEach(k=>{const b=document.createElement('button');b.className='key'+(['SPACE'].includes(k)?' space':'')+(['Enter','?123','⇧'].includes(k)?' action':'')+(['⌫'].includes(k)?' wide':'');b.textContent=k==='SPACE'?'Dấu cách':k;b.onclick=()=>pressKey(k);line.appendChild(b)});root.appendChild(line)})}
+function pressKey(k){let el=document.activeElement;if(!el||!['INPUT','TEXTAREA'].includes(el.tagName)){el=document.getElementById('address');el.focus()}if(k==='Enter'){if(el.id==='address')goAddress();else el.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));return}if(k==='⌫'){let s=el.selectionStart??el.value.length,e=el.selectionEnd??s;if(s===e&&s>0)s--;el.setRangeText('',s,e,'end')}else if(k==='SPACE'){el.setRangeText(' ',el.selectionStart??el.value.length,el.selectionEnd??el.value.length,'end')}else if(k==='?123'){return}else if(k==='⇧'){return}else{let s=el.selectionStart??el.value.length,e=el.selectionEnd??s;el.setRangeText(k,s,e,'end')}el.dispatchEvent(new Event('input',{bubbles:true}))}
+buildKeyboard();window.addEventListener('resize',()=>{cursorX=Math.min(cursorX,window.innerWidth-24);cursorY=Math.min(cursorY,window.innerHeight-60);placeCursor()});
 </script>
 </body>
 </html>'''
-
 path = Path("/mnt/data/index.html")
 path.write_text(html, encoding="utf-8")
-print(f"Đã tạo {path} ({path.stat().st_size} bytes)")
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cloud PC</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#0878bd;color:white;overflow:hidden}
-.desktop{height:100dvh;padding:20px;background:linear-gradient(135deg,#0868b9,#48c6ef)}
-.icon{width:85px;text-align:center;padding:12px 3px;cursor:pointer;border-radius:8px}
-.icon:active{background:#ffffff44}
-.icon span{font-size:35px;display:block;margin-bottom:8px}
-.window{display:none;position:absolute;top:15%;left:5%;width:90%;height:65%;background:#f4f7fb;color:#222;border-radius:12px;box-shadow:0 8px 35px #0039;overflow:hidden}
-.head{background:#fff;padding:15px;display:flex;justify-content:space-between;font-weight:bold}
-.content{padding:20px}
-.taskbar{position:absolute;bottom:0;width:100%;height:58px;background:#e9f4fccc;display:flex;align-items:center;justify-content:center;gap:24px;color:#123}
-.taskbar button{font-size:22px;border:0;background:transparent;padding:10px}
-#start{display:none;position:absolute;bottom:65px;left:10px;background:#f5f7fb;color:#222;padding:20px;border-radius:15px;width:260px;box-shadow:0 5px 20px #0005}
-button{cursor:pointer}
-</style>
-</head>
-<body>
-<div class="desktop">
-  <div class="icon" onclick="openApp('pc')"><span>🖥️</span>This PC</div>
-  <div class="icon" onclick="openApp('browser')"><span>🌐</span>Browser</div>
-  <div class="icon" onclick="openApp('games')"><span>🎮</span>Games</div>
-  <div class="icon" onclick="openApp('about')"><span>⚙️</span>Settings</div>
-
-  <div class="window" id="app">
-    <div class="head"><span id="title">Cloud PC</span><button onclick="closeApp()">✖</button></div>
-    <div class="content" id="content"></div>
-  </div>
-
-  <div id="start">
-    <h3>☁️ Cloud PC</h3>
-    <p onclick="openApp('pc')">🖥️ This PC</p>
-    <p onclick="openApp('browser')">🌐 Browser</p>
-    <p onclick="openApp('games')">🎮 Games</p>
-    <p onclick="openApp('about')">⚙️ Settings</p>
-  </div>
-
-  <div class="taskbar">
-    <button onclick="toggleStart()">⊞</button>
-    <button onclick="openApp('browser')">🌐</button>
-    <button onclick="openApp('games')">🎮</button>
-    <span id="clock"></span>
-  </div>
-</div>
-<script>
-function openApp(name){
- const data={
- pc:['This PC','<h2>🖥️ This PC</h2><p>Cloud storage: Demo</p><p>Windows Cloud Simulator</p>'],
- browser:['Browser','<h2>🌐 Web Browser</h2><input placeholder="Nhập địa chỉ website" id="url" style="width:100%;padding:12px"><p><button onclick="visit()">Mở website</button></p><p id="msg">Kết nối Internet bằng trình duyệt của bạn.</p>'],
- games:['Games','<h2>🎮 Game Center</h2><p>Đây là khu vực demo game.</p><p>Muốn chạy game PC thật cần kết nối máy chủ cloud có GPU.</p>'],
- about:['Settings','<h2>⚙️ Settings</h2><p>Cloud PC Demo v1.0</p><p>Thiết bị: Android / Web</p><p>Đây chưa phải Windows thật.</p>']
- };
- document.getElementById('title').textContent=data[name][0];
- document.getElementById('content').innerHTML=data[name][1];
- document.getElementById('app').style.display='block';
- document.getElementById('start').style.display='none';
-}
-function closeApp(){document.getElementById('app').style.display='none'}
-function toggleStart(){let s=document.getElementById('start');s.style.display=s.style.display==='block'?'none':'block'}
-function visit(){
- let u=document.getElementById('url').value.trim();
- if(!/^https?:\/\//i.test(u))u='https://'+u;
- if(u!=='https://')window.open(u,'_blank','noopener');
-}
-function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}
-tick();setInterval(tick,1000);
-</script>
-</body>
-</html>
+print(f"Đã tạo file index.html mới: {path.stat().st_size:,} byte")
