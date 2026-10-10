@@ -1,3 +1,122 @@
+from pathlib import Path
+
+html = r'''<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Cloud PC Simulator</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Tahoma,Arial,sans-serif;overflow:hidden}
+body{background:#0878bd}
+.desktop{position:relative;width:100%;height:100%;overflow:hidden;background:
+linear-gradient(32deg,transparent 0 25%,#ffffff0c 25.2% 25.8%,transparent 26%),
+linear-gradient(145deg,#1688c5,#0075bd 52%,#0750a5)}
+.desktop:before{content:"";position:absolute;inset:0;background:linear-gradient(35deg,transparent 0 35%,#ffffff13 35.2% 35.7%,transparent 36%),linear-gradient(145deg,transparent 0 52%,#ffffff0b 52.2% 53%,transparent 53.2%);pointer-events:none}
+.taskbar{position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(#f7f7f7,#d9d9d9);border-top:2px solid #eee;display:flex;align-items:center;z-index:10}
+.start{height:30px;margin-left:3px;padding:0 10px;border:1px solid #777;border-radius:3px;background:linear-gradient(#fff,#ddd);font-weight:bold;color:#222}
+.startmenu{display:none;position:absolute;bottom:36px;left:3px;width:min(290px,90vw);background:#f3f3f3;border:2px solid #1e6bb3;box-shadow:3px 3px 12px #0005;z-index:20;padding:8px}
+.startmenu button{display:block;width:100%;text-align:left;padding:12px;border:0;background:transparent;font-size:16px}
+.startmenu button:active,.startmenu button:hover{background:#cde7fa}
+.window{display:none;position:absolute;left:4%;top:5%;width:92%;height:84%;max-height:calc(100% - 55px);background:#f4f4f4;border:2px solid #1769a8;border-radius:6px 6px 0 0;box-shadow:0 5px 22px #0005;z-index:5;overflow:hidden}
+.titlebar{height:36px;background:linear-gradient(#1688d0,#07549b);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 8px;font-weight:bold}
+.close{border:1px solid #fff8;background:#d94b3d;color:white;border-radius:3px;font-weight:bold;width:28px;height:25px}
+.content{height:calc(100% - 36px);overflow:auto;padding:12px}
+.hero{padding:14px;background:linear-gradient(120deg,#dceefa,#fff);border:1px solid #b6d4e8;border-radius:8px;margin-bottom:12px}
+.hero h2{margin:0 0 6px;font-size:21px}.muted{color:#555;font-size:13px;line-height:1.45}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.game{background:white;border:1px solid #c5d3df;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:7px;min-height:190px}
+.game h3{margin:0;font-size:17px}.tag{font-size:12px;color:#31546c}.game p{margin:0;font-size:13px;line-height:1.4;color:#444;flex:1}
+.download{display:block;text-align:center;padding:10px;border-radius:5px;background:#0879c9;color:#fff;text-decoration:none;font-weight:bold}
+.download:active{background:#075b96}.note{font-size:12px;color:#555;line-height:1.5;margin-top:12px}
+.browserbar{display:flex;gap:6px;margin-bottom:10px}.browserbar input{flex:1;min-width:0;padding:10px;border:1px solid #aaa;border-radius:5px}.browserbar button{padding:9px}
+.desktoplabel{position:absolute;top:16px;left:14px;color:#fff;text-shadow:1px 1px 3px #123;font-size:13px}
+.mouse-controls{position:absolute;right:10px;top:20%;display:flex;flex-direction:column;gap:10px;z-index:3}
+.mouse-controls button{width:43px;height:43px;border-radius:50%;border:1px solid #a9d4e6;background:#103c5fc9;color:#e5f8ff;font-size:18px}
+@media(max-width:480px){.window{left:2%;width:96%;top:3%;height:88%}.games{grid-template-columns:1fr}.game{min-height:160px}.content{padding:8px}}
+</style>
+</head>
+<body>
+<div class="desktop">
+  <div class="desktoplabel">Cloud PC</div>
+  <div class="mouse-controls">
+    <button aria-label="Chuột trái" onclick="toast('Chuột trái ảo')">◧</button>
+    <button aria-label="Chuột phải" onclick="toast('Chuột phải ảo')">◨</button>
+    <button aria-label="Cuộn lên" onclick="toast('Cuộn lên')">⌃</button>
+    <button aria-label="Cuộn xuống" onclick="toast('Cuộn xuống')">⌄</button>
+  </div>
+  <div id="startmenu" class="startmenu">
+    <button onclick="openWindow('games')">🎮 Games — Tải game PC</button>
+    <button onclick="openWindow('browser')">🌐 Google Chrome (mô phỏng)</button>
+    <button onclick="toast('Đây là giao diện mô phỏng trên website.')">⚙️ Settings</button>
+  </div>
+  <section id="games" class="window">
+    <div class="titlebar"><span>🎮 Games — PC Game Store Links</span><button class="close" onclick="closeWindow('games')">×</button></div>
+    <div class="content">
+      <div class="hero">
+        <h2>Thư viện game PC</h2>
+        <div class="muted">Chọn game rồi bấm “Tải từ trang chính thức”. Liên kết sẽ mở trang nhà phát hành/cửa hàng để mua, cài đặt hoặc tải launcher.</div>
+      </div>
+      <div class="games">
+        <article class="game">
+          <h3>Grand Theft Auto V Enhanced</h3><div class="tag">Hành động • Thế giới mở • Khoảng 105 GB</div>
+          <p>Dung lượng yêu cầu trên PC được nhà phát hành/cửa hàng công bố; cần máy Windows tương thích và dung lượng trống SSD.</p>
+          <a class="download" href="https://store.rockstargames.com/en/game/buy-gta-v" target="_blank" rel="noopener">Tải từ Rockstar Games</a>
+          <a class="download" href="https://store.steampowered.com/app/3240220/Grand_Theft_Auto_V/" target="_blank" rel="noopener">Mở trên Steam</a>
+        </article>
+        <article class="game">
+          <h3>Red Dead Redemption 2</h3><div class="tag">Phiêu lưu • Thế giới mở • Dung lượng lớn</div>
+          <p>Game PC dung lượng lớn. Xem yêu cầu lưu trữ và các lựa chọn mua/tải trên trang chính thức trước khi cài.</p>
+          <a class="download" href="https://www.rockstargames.com/downloads" target="_blank" rel="noopener">Trang tải Rockstar Games</a>
+        </article>
+        <article class="game">
+          <h3>Minecraft: Java & Bedrock</h3><div class="tag">Sinh tồn • Sáng tạo</div>
+          <p>Tải launcher chính thức; dung lượng cài đặt thay đổi theo phiên bản, thế giới và nội dung bổ sung.</p>
+          <a class="download" href="https://www.minecraft.net/download" target="_blank" rel="noopener">Tải Minecraft chính thức</a>
+        </article>
+        <article class="game">
+          <h3>Fortnite</h3><div class="tag">Battle Royale • Nhiều người chơi</div>
+          <p>Cài Epic Games Launcher trên PC tương thích, sau đó tìm Fortnite trong thư viện cửa hàng.</p>
+          <a class="download" href="https://store.epicgames.com/en-US/" target="_blank" rel="noopener">Mở Epic Games Store</a>
+          <a class="download" href="https://www.epicgames.com/help/en-US/" target="_blank" rel="noopener">Hướng dẫn Epic Games</a>
+        </article>
+        <article class="game">
+          <h3>Roblox (PC)</h3><div class="tag">Nhiều thể loại • Online</div>
+          <p>Tải ứng dụng Roblox chính thức. Đây không phải bản cài game Windows chạy trực tiếp bên trong website giả lập.</p>
+          <a class="download" href="https://www.roblox.com/download" target="_blank" rel="noopener">Tải Roblox chính thức</a>
+        </article>
+        <article class="game">
+          <h3>Epic Games Launcher</h3><div class="tag">Cửa hàng và trình quản lý game</div>
+          <p>Dùng launcher để tải và cài các game có trong tài khoản của bạn trên máy Windows.</p>
+          <a class="download" href="https://store.epicgames.com/download" target="_blank" rel="noopener">Tải Epic Games Launcher</a>
+        </article>
+      </div>
+      <div class="note"><b>Quan trọng:</b> Đây là trang danh sách liên kết, không tự tải game vào website và không hiển thị tiến trình tải thật. Game PC thường không chạy trực tiếp trên Android. Không tải file cài đặt từ website không rõ nguồn gốc.</div>
+    </div>
+  </section>
+  <section id="browser" class="window">
+    <div class="titlebar"><span>🌐 Google Chrome — mô phỏng</span><button class="close" onclick="closeWindow('browser')">×</button></div>
+    <div class="content">
+      <div class="browserbar"><input id="address" value="https://www.google.com" aria-label="Địa chỉ website"><button onclick="goAddress()">Đi</button></div>
+      <p class="muted">Đây là cửa sổ trình duyệt mô phỏng. Bấm “Đi” để mở địa chỉ trong tab trình duyệt mới; một số trang có thể chặn hiển thị bên trong website.</p>
+      <button onclick="openWindow('games')">Mở Games 🎮</button>
+    </div>
+  </section>
+  <div class="taskbar"><button class="start" onclick="toggleStart()">🪟 Start</button></div>
+</div>
+<script>
+function toggleStart(){const m=document.getElementById('startmenu');m.style.display=m.style.display==='block'?'none':'block'}
+function openWindow(id){document.getElementById('startmenu').style.display='none';document.querySelectorAll('.window').forEach(w=>w.style.display='none');document.getElementById(id).style.display='block'}
+function closeWindow(id){document.getElementById(id).style.display='none'}
+function goAddress(){let v=document.getElementById('address').value.trim();if(!/^https?:\/\//i.test(v))v='https://'+v;window.open(v,'_blank','noopener')}
+function toast(msg){alert(msg)}
+</script>
+</body>
+</html>'''
+
+path = Path("/mnt/data/index.html")
+path.write_text(html, encoding="utf-8")
+print(f"Đã tạo {path} ({path.stat().st_size} bytes)")
 <!DOCTYPE html>
 <html lang="vi">
 <head>
