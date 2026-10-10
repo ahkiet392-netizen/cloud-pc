@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud PC</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0878bd;color:white;overflow:hidden}
+.desktop{height:100dvh;padding:20px;background:linear-gradient(135deg,#0868b9,#48c6ef)}
+.icon{width:85px;text-align:center;padding:12px 3px;cursor:pointer;border-radius:8px}
+.icon:active{background:#ffffff44}
+.icon span{font-size:35px;display:block;margin-bottom:8px}
+.window{display:none;position:absolute;top:15%;left:5%;width:90%;height:65%;background:#f4f7fb;color:#222;border-radius:12px;box-shadow:0 8px 35px #0039;overflow:hidden}
+.head{background:#fff;padding:15px;display:flex;justify-content:space-between;font-weight:bold}
+.content{padding:20px}
+.taskbar{position:absolute;bottom:0;width:100%;height:58px;background:#e9f4fccc;display:flex;align-items:center;justify-content:center;gap:24px;color:#123}
+.taskbar button{font-size:22px;border:0;background:transparent;padding:10px}
+#start{display:none;position:absolute;bottom:65px;left:10px;background:#f5f7fb;color:#222;padding:20px;border-radius:15px;width:260px;box-shadow:0 5px 20px #0005}
+button{cursor:pointer}
+</style>
+</head>
+<body>
+<div class="desktop">
+  <div class="icon" onclick="openApp('pc')"><span>🖥️</span>This PC</div>
+  <div class="icon" onclick="openApp('browser')"><span>🌐</span>Browser</div>
+  <div class="icon" onclick="openApp('games')"><span>🎮</span>Games</div>
+  <div class="icon" onclick="openApp('about')"><span>⚙️</span>Settings</div>
+
+  <div class="window" id="app">
+    <div class="head"><span id="title">Cloud PC</span><button onclick="closeApp()">✖</button></div>
+    <div class="content" id="content"></div>
+  </div>
+
+  <div id="start">
+    <h3>☁️ Cloud PC</h3>
+    <p onclick="openApp('pc')">🖥️ This PC</p>
+    <p onclick="openApp('browser')">🌐 Browser</p>
+    <p onclick="openApp('games')">🎮 Games</p>
+    <p onclick="openApp('about')">⚙️ Settings</p>
+  </div>
+
+  <div class="taskbar">
+    <button onclick="toggleStart()">⊞</button>
+    <button onclick="openApp('browser')">🌐</button>
+    <button onclick="openApp('games')">🎮</button>
+    <span id="clock"></span>
+  </div>
+</div>
+<script>
+function openApp(name){
+ const data={
+ pc:['This PC','<h2>🖥️ This PC</h2><p>Cloud storage: Demo</p><p>Windows Cloud Simulator</p>'],
+ browser:['Browser','<h2>🌐 Web Browser</h2><input placeholder="Nhập địa chỉ website" id="url" style="width:100%;padding:12px"><p><button onclick="visit()">Mở website</button></p><p id="msg">Kết nối Internet bằng trình duyệt của bạn.</p>'],
+ games:['Games','<h2>🎮 Game Center</h2><p>Đây là khu vực demo game.</p><p>Muốn chạy game PC thật cần kết nối máy chủ cloud có GPU.</p>'],
+ about:['Settings','<h2>⚙️ Settings</h2><p>Cloud PC Demo v1.0</p><p>Thiết bị: Android / Web</p><p>Đây chưa phải Windows thật.</p>']
+ };
+ document.getElementById('title').textContent=data[name][0];
+ document.getElementById('content').innerHTML=data[name][1];
+ document.getElementById('app').style.display='block';
+ document.getElementById('start').style.display='none';
+}
+function closeApp(){document.getElementById('app').style.display='none'}
+function toggleStart(){let s=document.getElementById('start');s.style.display=s.style.display==='block'?'none':'block'}
+function visit(){
+ let u=document.getElementById('url').value.trim();
+ if(!/^https?:\/\//i.test(u))u='https://'+u;
+ if(u!=='https://')window.open(u,'_blank','noopener');
+}
+function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}
+tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
