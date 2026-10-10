@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Cloud PC</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#087fbd;color:#fff;overflow:hidden}
+button,input{font:inherit}
+button{cursor:pointer}
+#desktop{height:100dvh;background:linear-gradient(135deg,#0875bd,#42c8e9);position:relative;padding:18px;overflow:hidden}
+.icon{width:90px;min-height:95px;border:0;background:transparent;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border-radius:7px;margin-bottom:7px;font-size:15px}
+.icon:active,.icon:hover{background:#ffffff35}
+.emoji{font-size:38px}
+#taskbar{position:absolute;bottom:0;left:0;right:0;height:55px;background:#e9f5f8eF;color:#172b3b;display:flex;align-items:center;justify-content:center;gap:12px;z-index:1000;padding:5px}
+#taskbar button{border:0;background:transparent;padding:8px;border-radius:6px;font-size:22px}
+#clock{position:absolute;right:12px;font-size:13px}
+.win{position:absolute;left:7%;top:8%;width:86%;height:70%;max-width:850px;background:#f5f7fb;color:#172333;border:1px solid #d6e0e8;border-radius:9px;box-shadow:0 8px 30px #00334b65;display:none;flex-direction:column;overflow:hidden;z-index:20}
+.title{height:43px;flex-shrink:0;background:#e8eff6;display:flex;align-items:center;justify-content:space-between;padding:0 10px;touch-action:none;user-select:none}
+.title strong{font-size:14px}
+.controls{display:flex;gap:4px}
+.controls button{border:0;background:transparent;padding:7px 10px;border-radius:4px;color:#24394b}
+.controls button:last-child{background:#e45b54;color:white}
+.content{flex:1;overflow:auto;padding:12px}
+.appgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px}
+.tile{border:1px solid #d7e1eb;background:white;color:#213548;border-radius:8px;padding:15px 7px;text-align:center;min-height:75px}
+.tile:active{background:#dceeff}
+.toolbar{display:flex;gap:5px;margin-bottom:10px}
+.toolbar input{min-width:0;flex:1;padding:10px;border:1px solid #bdcbd9;border-radius:6px;color:#172333;background:white}
+.action{padding:9px 12px;border:0;border-radius:6px;background:#087bc1;color:white}
+.muted{color:#667789;font-size:13px}
+#browserFrame{width:100%;height:calc(100% - 52px);border:0;background:white}
+#browserBody{padding:0;display:flex;flex-direction:column}
+#start{position:absolute;bottom:60px;left:8px;background:#f2f7fc;color:#192b3d;width:min(300px,90vw);padding:15px;border-radius:12px;box-shadow:0 4px 25px #00334b70;z-index:1100;display:none}
+#start input{width:100%;padding:10px;margin-bottom:12px;color:#172333;background:white;border:1px solid #bbcbd9;border-radius:6px}
+#keyboard{position:absolute;bottom:60px;left:2%;width:96%;background:#dce5ef;color:#172333;border-radius:9px;padding:7px;z-index:1200;display:none;box-shadow:0 3px 15px #1236}
+.keyrow{display:flex;gap:4px;margin:4px 0;justify-content:center}
+.keyrow button{flex:1;min-width:0;padding:11px 0;border:0;border-radius:5px;background:white;color:#162b3e;box-shadow:0 1px 2px #789}
+.keyrow .wide{flex:2}
+#mousePanel{position:absolute;right:10px;bottom:65px;width:160px;background:#f3f7fb;color:#123;border-radius:10px;padding:9px;z-index:1150;display:none;box-shadow:0 3px 15px #1236}
+#pad{height:95px;background:#dceaf5;border-radius:7px;touch-action:none;position:relative;overflow:hidden}
+#pad:after{content:"Di chuyển ngón tay";position:absolute;inset:0;display:grid;place-items:center;color:#667b8b;font-size:12px;pointer-events:none}
+#mousePanel button{padding:8px;border:0;border-radius:5px;background:#dce5ef;color:#123}
+#pointer{position:absolute;left:50%;top:50%;font-size:22px;z-index:900;pointer-events:none;display:none;filter:drop-shadow(1px 1px 1px white)}
+.folder{padding:10px;border-bottom:1px solid #dce3e9}
+@media(min-width:700px){.win{left:18%;top:8%;width:64%;height:76%}.icon{width:100px}}
+</style>
+</head>
+<body>
+<div id="desktop">
+  <button class="icon" onclick="openApp('pc')"><span class="emoji">🖥️</span>This PC</button>
+  <button class="icon" onclick="openApp('browser')"><span class="emoji">🌐</span>Google Chrome</button>
+  <button class="icon" onclick="openApp('games')"><span class="emoji">🎮</span>Games</button>
+  <button class="icon" onclick="openApp('settings')"><span class="emoji">⚙️</span>Settings</button>
+  <button class="icon" onclick="openApp('notes')"><span class="emoji">📝</span>Notepad</button>
+
+  <div class="win" id="win-pc">
+    <div class="title"><strong>🖥️ This PC</strong><div class="controls"><button onclick="minimize('pc')">—</button><button onclick="closeApp('pc')">✕</button></div></div>
+    <div class="content">
+      <h3>This PC</h3>
+      <div class="appgrid">
+        <button class="tile" onclick="folder('C:')">💽<br>Local Disk (C:)</button>
+        <button class="tile" onclick="folder('D:')">💿<br>Data (D:)</button>
+        <button class="tile" onclick="folder('Downloads')">📥<br>Downloads</button>
+        <button class="tile" onclick="folder('Documents')">📁<br>Documents</button>
+      </div>
+      <p class="muted">Đây là các ổ đĩa giả lập, không phải bộ nhớ thật của điện thoại.</p>
+      <div id="folderContents"></div>
+    </div>
+  </div>
+
+  <div class="win" id="win-browser">
+    <div class="title"><strong>🌐 Google Chrome</strong><div class="controls"><button onclick="minimize('browser')">—</button><button onclick="closeApp('browser')">✕</button></div></div>
+    <div class="content" id="browserBody">
+      <div class="toolbar">
+        <button onclick="browserHome()">⌂</button>
+        <input id="address" value="https://www.google.com" placeholder="Nhập địa chỉ website">
+        <button class="action" onclick="go()">Đi</button>
+        <button onclick="openExternal()">↗</button>
+      </div>
+      <div id="browserInfo" style="padding:12px">
+        <h2>🌐 Chrome giả lập</h2>
+        <p>Nhập địa chỉ web phía trên rồi nhấn Đi.</p>
+        <button class="tile" onclick="navigate('https://www.google.com')">Google Search</button>
+        <button class="tile" onclick="navigate('https://www.wikipedia.org')">Wikipedia</button>
+        <button class="tile" onclick="navigate('https://www.youtube.com')">YouTube</button>
+        <p class="muted">Một số website chặn hiển thị bên trong cửa sổ. Hãy nhấn ↗ để mở trong tab mới.</p>
+      </div>
+      <iframe id="browserFrame" title="Trình duyệt" style="display:none" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <div class="win" id="win-games">
+    <div class="title"><strong>🎮 Games</strong><div class="controls"><button onclick="minimize('games')">—</button><button onclick="closeApp('games')">✕</button></div></div>
+    <div class="content">
+      <h3>Games</h3>
+      <div class="appgrid">
+        <button class="tile" onclick="playGame('Click Challenge')">🎯<br>Click Challenge</button>
+        <button class="tile" onclick="playGame('Đoán số')">🔢<br>Đoán số</button>
+        <button class="tile" onclick="playGame('Mini game')">🕹️<br>Mini game</button>
+      </div>
+      <div id="gameArea"></div>
+    </div>
+  </div>
+
+  <div class="win" id="win-settings">
+    <div class="title"><strong>⚙️ Settings</strong><div class="controls"><button onclick="minimize('settings')">—</button><button onclick="closeApp('settings')">✕</button></div></div>
+    <div class="content">
+      <h3>Settings</h3>
+      <div class="folder">🖼️ Wallpaper <button class="action" onclick="changeWallpaper()">Đổi hình nền</button></div>
+      <div class="folder">⌨️ Bàn phím ảo <button class="action" onclick="toggleKeyboard()">Mở bàn phím</button></div>
+      <div class="folder">🖱️ Chuột ảo <button class="action" onclick="toggleMouse()">Mở chuột</button></div>
+      <div class="folder">ℹ️ About <p class="muted">Cloud PC Web Simulator — phiên bản chạy trên trình duyệt.</p></div>
+    </div>
+  </div>
+
+  <div class="win" id="win-notes">
+    <div class="title"><strong>📝 Notepad</strong><div class="controls"><button onclick="minimize('notes')">—</button><button onclick="closeApp('notes')">✕</button></div></div>
+    <div class="content"><textarea id="noteText" placeholder="Viết ghi chú ở đây..." style="width:100%;height:90%;min-height:200px;padding:10px;color:#123"></textarea></div>
+  </div>
+
+  <div id="start">
+    <h3>☁️ Cloud PC</h3>
+    <input id="startSearch" placeholder="Tìm ứng dụng..." oninput="filterApps(this.value)">
+    <div id="startApps">
+      <button class="tile" onclick="openApp('pc')">🖥️ This PC</button>
+      <button class="tile" onclick="openApp('browser')">🌐 Chrome</button>
+      <button class="tile" onclick="openApp('games')">🎮 Games</button>
+      <button class="tile" onclick="openApp('settings')">⚙️ Settings</button>
+      <button class="tile" onclick="openApp('notes')">📝 Notepad</button>
+    </div>
+  </div>
+
+  <div id="keyboard">
+    <div class="keyrow"><button onclick="hideKeyboard()">Ẩn bàn phím ✕</button><button onclick="typeKey('Backspace')">⌫</button><button onclick="typeKey('Enter')">↵ Enter</button></div>
+    <div class="keyrow"><button onclick="typeKey('q')">q</button><button onclick="typeKey('w')">w</button><button onclick="typeKey('e')">e</button><button onclick="typeKey('r')">r</button><button onclick="typeKey('t')">t</button><button onclick="typeKey('y')">y</button><button onclick="typeKey('u')">u</button><button onclick="typeKey('i')">i</button><button onclick="typeKey('o')">o</button><button onclick="typeKey('p')">p</button></div>
+    <div class="keyrow"><button onclick="typeKey('a')">a</button><button onclick="typeKey('s')">s</button><button onclick="typeKey('d')">d</button><button onclick="typeKey('f')">f</button><button onclick="typeKey('g')">g</button><button onclick="typeKey('h')">h</button><button onclick="typeKey('j')">j</button><button onclick="typeKey('k')">k</button><button onclick="typeKey('l')">l</button></div>
+    <div class="keyrow"><button onclick="typeKey('z')">z</button><button onclick="typeKey('x')">x</button><button onclick="typeKey('c')">c</button><button onclick="typeKey('v')">v</button><button onclick="typeKey('b')">b</button><button onclick="typeKey('n')">n</button><button onclick="typeKey('m')">m</button><button onclick="typeKey(' ') " class="wide">Dấu cách</button></div>
+    <div class="keyrow"><button onclick="typeKey('.')">.</button><button onclick="typeKey('/')">/</button><button onclick="typeKey('-')">-</button><button onclick="typeKey('Enter')" class="wide">Đi / Enter</button></div>
+  </div>
+
+  <div id="mousePanel">
+    <b>🖱️ Chuột ảo</b>
+    <div id="pad"></div>
+    <div style="display:flex;gap:5px;margin-top:6px"><button onclick="mouseClick(0)">Click trái</button><button onclick="mouseClick(2)">Click phải</button><button onclick="toggleMouse()">Đóng</button></div>
+  </div>
+  <div id="pointer">↖</div>
+
+  <div id="taskbar">
+    <button onclick="toggleStart()">⊞</button>
+    <button onclick="openApp('browser')">🌐</button>
+    <button onclick="openApp('pc')">🖥️</button>
+    <button onclick="toggleKeyboard()">⌨️</button>
+    <button onclick="toggleMouse()">🖱️</button>
+    <span id="clock">20:00</span>
+  </div>
+</div>
+
+<script>
+let z=30, activeInput=null;
+const names=['pc','browser','games','settings','notes'];
+function openApp(n){
+ document.getElementById('start').style.display='none';
+ names.forEach(x=>{});
+ const w=document.getElementById('win-'+n);
+ if(w){w.style.display='flex';w.style.zIndex=++z;}
+}
+function closeApp(n){document.getElementById('win-'+n).style.display='none'}
+function minimize(n){closeApp(n)}
+function toggleStart(){
+ const s=document.getElementById('start');
+ s.style.display=s.style.display==='block'?'none':'block';
+}
+function filterApps(q){
+ document.querySelectorAll('#startApps button').forEach(b=>{
+ b.style.display=b.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';
+ });
+}
+function folder(name){
+ document.getElementById('folderContents').innerHTML=
+ '<h3>'+name+'</h3><div class="folder">📄 Example.txt <span class="muted">Tệp mẫu giả lập</span></div><div class="folder">📁 New folder</div>';
+}
+function navigate(url){
+ document.getElementById('address').value=url;
+ document.getElementById('browserInfo').style.display='none';
+ const f=document.getElementById('browserFrame');
+ f.style.display='block';f.src=url;
+}
+function go(){
+ let url=document.getElementById('address').value.trim();
+ if(!url)return;
+ if(!/^https?:\/\//i.test(url)){
+ url=/^[\w.-]+\.[a-z]{2,}/i.test(url)?'https://'+url:'https://www.google.com/search?q='+encodeURIComponent(url);
+ }
+ navigate(url);
+}
+function openExternal(){
+ let url=document.getElementById('address').value.trim();
+ if(!/^https?:\/\//i.test(url))url='https://'+url;
+ window.open(url,'_blank','noopener');
+}
+function browserHome(){
+ document.getElementById('browserFrame').style.display='none';
+ document.getElementById('browserFrame').src='about:blank';
+ document.getElementById('browserInfo').style.display='block';
+ document.getElementById('address').value='https://www.google.com';
+}
+function playGame(g){
+ const area=document.getElementById('gameArea');
+ if(g==='Click Challenge'){
+ area.innerHTML='<h3>Click Challenge</h3><p>Điểm: <b id="score">0</b></p><button class="action" style="padding:22px" onclick="document.getElementById(\'score\').textContent=Number(document.getElementById(\'score\').textContent)+1">BẤM VÀO ĐÂY!</button>';
+ }else if(g==='Đoán số'){
+ const n=Math.floor(Math.random()*10)+1;
+ area.innerHTML='<h3>Đoán số từ 1 đến 10</h3><input id="guess" type="number" min="1" max="10" placeholder="Nhập số"><button class="action" onclick="document.getElementById(\'guessResult\').textContent=(Number(document.getElementById(\'guess\').value)==='+n+')?\'Chính xác!\':\'Chưa đúng, số bí mật là '+n+'\'">Đoán</button><p id="guessResult"></p>';
+ }else{
+ area.innerHTML='<h3>Mini game</h3><p>Chọn một trò chơi ở trên để bắt đầu.</p>';
+ }
+}
+function changeWallpaper(){
+ const colors=['linear-gradient(135deg,#182848,#4b6cb7)','linear-gradient(135deg,#42275a,#734b6d)','linear-gradient(135deg,#134e5e,#71b280)','linear-gradient(135deg,#0875bd,#42c8e9)'];
+ document.getElementById('desktop').style.background=colors[Math.floor(Math.random()*colors.length)];
+}
+function toggleKeyboard(){
+ const k=document.getElementById('keyboard');
+ k.style.display=k.style.display==='block'?'none':'block';
+}
+function hideKeyboard(){document.getElementById('keyboard').style.display='none'}
+function typeKey(k){
+ let el=activeInput;
+ if(!el)el=document.getElementById('address');
+ if(!el || !('value' in el))return;
+ el.focus();
+ const a=el.selectionStart??el.value.length,b=el.selectionEnd??el.value.length;
+ if(k==='Enter'){
+ if(el.id==='address')go();
+ else el.dispatchEvent(new Event('change',{bubbles:true}));
+ return;
+ }
+ if(k==='Backspace'){
+ if(a===b&&a>0){el.value=el.value.slice(0,a-1)+el.value.slice(b);el.setSelectionRange(a-1,a-1)}
+ else{el.value=el.value.slice(0,a)+el.value.slice(b);el.setSelectionRange(a,a)}
+ }else{
+ el.value=el.value.slice(0,a)+k+el.value.slice(b);
+ el.setSelectionRange(a+k.length,a+k.length);
+ }
+ el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+document.addEventListener('focusin',e=>{
+ if(e.target.matches('input,textarea'))activeInput=e.target;
+});
+function toggleMouse(){
+ const p=document.getElementById('mousePanel');
+ const show=p.style.display!=='block';
+ p.style.display=show?'block':'none';
+ document.getElementById('pointer').style.display=show?'block':'none';
+}
+let px=innerWidth/2,py=innerHeight/2;
+function movePointer(dx,dy){
+ px=Math.max(2,Math.min(innerWidth-4,px+dx));
+ py=Math.max(2,Math.min(innerHeight-4,py+dy));
+ const p=document.getElementById('pointer');
+ p.style.left=px+'px';p.style.top=py+'px';
+}
+const pad=document.getElementById('pad');
+let lastX=0,lastY=0,dragging=false;
+pad.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;pad.setPointerCapture(e.pointerId)});
+pad.addEventListener('pointermove',e=>{
+ if(!dragging)return;
+ movePointer((e.clientX-lastX)*2,(e.clientY-lastY)*2);
+ lastX=e.clientX;lastY=e.clientY;
+});
+pad.addEventListener('pointerup',()=>dragging=false);
+pad.addEventListener('pointercancel',()=>dragging=false);
+function mouseClick(button){
+ const p=document.getElementById('pointer');
+ const old=p.style.display;p.style.display='none';
+ const el=document.elementFromPoint(px,py);
+ if(el){
+ if(button===0){el.click()}
+ else{
+ el.dispatchEvent(new MouseEvent('contextmenu',{bubbles:true,cancelable:true,clientX:px,clientY:py,button:2}));
+ }
+ }
+ p.style.display=old;
+}
+document.querySelectorAll('.win').forEach(w=>{
+ w.addEventListener('pointerdown',()=>w.style.zIndex=++z);
+ const bar=w.querySelector('.title');
+ bar.addEventListener('pointerdown',e=>{
+ if(e.target.closest('button'))return;
+ const r=w.getBoundingClientRect(),sx=e.clientX,sy=e.clientY;
+ const ox=r.left,oy=r.top;
+ bar.setPointerCapture(e.pointerId);
+ function move(ev){
+ w.style.left=Math.max(0,Math.min(innerWidth-w.offsetWidth,ox+ev.clientX-sx))+'px';
+ w.style.top=Math.max(0,Math.min(innerHeight-50,oy+ev.clientY-sy))+'px';
+ }
+ function end(){
+ bar.removeEventListener('pointermove',move);
+ bar.removeEventListener('pointerup',end);
+ bar.removeEventListener('pointercancel',end);
+ }
+ bar.addEventListener('pointermove',move);
+ bar.addEventListener('pointerup',end);
+ bar.addEventListener('pointercancel',end);
+ });
+});
+function tick(){
+ document.getElementById('clock').textContent=new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+}
+tick();setInterval(tick,15000);
+</script>
+</body>
+  </html>
+  
